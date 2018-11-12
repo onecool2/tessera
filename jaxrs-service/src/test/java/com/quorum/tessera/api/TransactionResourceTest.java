@@ -122,13 +122,13 @@ public class TransactionResourceTest {
     @Test
     public void sendRawTransaction() {
 
-        SendRawRequest sendRequest = new SendRawRequest();
+        SendSignedRequest sendRequest = new SendSignedRequest();
         sendRequest.setHash("HASH".getBytes());
 
-        Response result = transactionResource.sendRawTransaction(sendRequest);
+        Response result = transactionResource.sendSignedTransaction(sendRequest);
         assertThat(result.getStatus()).isEqualTo(200);
 
-        verify(transactionManager).sendRawTransaction(any(SendRawRequest.class));
+        verify(transactionManager).sendSignedTransaction(any(SendSignedRequest.class));
 
     }
 

@@ -8,7 +8,7 @@ public interface TransactionManager {
 
     SendResponse send(SendRequest sendRequest);
 
-    SendResponse sendRawTransaction(SendRawRequest sendRequest);
+    SendResponse sendSignedTransaction(SendSignedRequest sendRequest);
 
     void delete(DeleteRequest request);
 

@@ -78,14 +78,14 @@ public class TransactionResource {
     })
     @POST
     @PrivateApi
-    @Path("sendRawTransaction")
+    @Path("sendSignedTransaction")
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
-    public Response sendRawTransaction(
-        @ApiParam(name = "sendRawRequest", required = true)
-        @NotNull @Valid final SendRawRequest sendRawRequest) {
+    public Response sendSignedTransaction(
+        @ApiParam(name = "sendSignedRequest", required = true)
+        @NotNull @Valid final SendSignedRequest sendRawRequest) {
 
-        final SendResponse response = delegate.sendRawTransaction(sendRawRequest);
+        final SendResponse response = delegate.sendSignedTransaction(sendRawRequest);
 
         return Response.status(Response.Status.OK)
             .type(APPLICATION_JSON)

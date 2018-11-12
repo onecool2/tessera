@@ -113,7 +113,7 @@ public class TransactionManagerImpl implements TransactionManager {
     }
 
     @Override
-    public SendResponse sendRawTransaction(SendRawRequest sendRequest) {
+    public SendResponse sendSignedTransaction(SendSignedRequest sendRequest) {
         final byte[][] recipients = Stream.of(sendRequest)
             .filter(sr -> Objects.nonNull(sr.getTo()))
             .flatMap(s -> Stream.of(s.getTo()))

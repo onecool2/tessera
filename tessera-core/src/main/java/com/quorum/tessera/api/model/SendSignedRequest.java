@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlMimeType;
  * Used when a new transaction is to be created where this node is the sender
  */
 @ApiModel
-public class SendRawRequest {
+public class SendSignedRequest {
 
     @XmlMimeType("base64Binary")
     @Size(min = 1)

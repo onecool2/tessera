@@ -101,11 +101,11 @@ public class TransactionManagerTest {
 
         String receiver = Base64.getEncoder().encodeToString("RECEIVER".getBytes());
 
-        SendRawRequest sendRawRequest = new SendRawRequest();
+        SendSignedRequest sendRawRequest = new SendSignedRequest();
         sendRawRequest.setTo(receiver);
         sendRawRequest.setHash("HASH".getBytes());
 
-        SendResponse result = transactionManager.sendRawTransaction(sendRawRequest);
+        SendResponse result = transactionManager.sendSignedTransaction(sendRawRequest);
 
         assertThat(result).isNotNull();
 
@@ -124,12 +124,12 @@ public class TransactionManagerTest {
             Optional.empty());
 
         String receiver = Base64.getEncoder().encodeToString("RECEIVER".getBytes());
-        SendRawRequest sendRawRequest = new SendRawRequest();
+        SendSignedRequest sendRawRequest = new SendSignedRequest();
         sendRawRequest.setTo(receiver);
         sendRawRequest.setHash("HASH".getBytes());
 
         try {
-            transactionManager.sendRawTransaction(sendRawRequest);
+            transactionManager.sendSignedTransaction(sendRawRequest);
             failBecauseExceptionWasNotThrown(TransactionNotFoundException.class);
         } catch (TransactionNotFoundException ex) {
             verify(encryptedRawTransactionDAO).retrieveByHash(any(MessageHash.class));
