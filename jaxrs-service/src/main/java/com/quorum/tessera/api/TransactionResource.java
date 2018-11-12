@@ -58,10 +58,10 @@ public class TransactionResource {
         SendRequest amendSendRequest = new SendRequest();
         amendSendRequest.setFrom(sendRequest.getFrom());
         amendSendRequest.setTo(sendRequest.getTo());
-        
+
         byte[] decodedPayload = Base64.getDecoder().decode(sendRequest.getPayload());
         amendSendRequest.setPayload(decodedPayload);
-        
+
         final SendResponse response = delegate.send(amendSendRequest);
 
         return Response.status(Response.Status.OK)
@@ -70,6 +70,29 @@ public class TransactionResource {
                 .build();
 
     }
+
+    @ApiOperation(value = "Send private raw transaction payload", produces = "Encrypted payload hash")
+    @ApiResponses({
+        @ApiResponse(code = 200, response = SendResponse.class, message = "Send response"),
+        @ApiResponse(code = 400, message = "For unknown and unknown keys")
+    })
+    @POST
+    @PrivateApi
+    @Path("sendRawTransaction")
+    @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
+    public Response sendRawTransaction(
+        @ApiParam(name = "sendRawRequest", required = true)
+        @NotNull @Valid final SendRawRequest sendRawRequest) {
+
+        final SendResponse response = delegate.sendRawTransaction(sendRawRequest);
+
+        return Response.status(Response.Status.OK)
+            .type(APPLICATION_JSON)
+            .entity(response)
+            .build();
+    }
+
 
     @ApiOperation(value = "Send private transaction payload", produces = "Encrypted payload")
     @ApiResponses({

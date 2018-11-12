@@ -1,12 +1,7 @@
 package com.quorum.tessera.api;
 
-import com.quorum.tessera.api.model.DeleteRequest;
-import com.quorum.tessera.api.model.ReceiveRequest;
-import com.quorum.tessera.api.model.ReceiveResponse;
-import com.quorum.tessera.api.model.ResendRequest;
-import com.quorum.tessera.api.model.ResendResponse;
-import com.quorum.tessera.api.model.SendRequest;
-import com.quorum.tessera.api.model.SendResponse;
+import com.quorum.tessera.api.model.*;
+
 import java.util.Base64;
 import javax.ws.rs.core.Response;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -121,6 +116,19 @@ public class TransactionResourceTest {
         assertThat(result.getStatus()).isEqualTo(200);
 
         verify(transactionManager).send(any(SendRequest.class));
+
+    }
+
+    @Test
+    public void sendRawTransaction() {
+
+        SendRawRequest sendRequest = new SendRawRequest();
+        sendRequest.setHash("HASH".getBytes());
+
+        Response result = transactionResource.sendRawTransaction(sendRequest);
+        assertThat(result.getStatus()).isEqualTo(200);
+
+        verify(transactionManager).sendRawTransaction(any(SendRawRequest.class));
 
     }
 
