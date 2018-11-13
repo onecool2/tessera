@@ -78,7 +78,7 @@ public class TransactionResource {
     })
     @POST
     @PrivateApi
-    @Path("sendSignedTransaction")
+    @Path("sendsignedtx")
     @Consumes(APPLICATION_JSON)
     @Produces(APPLICATION_JSON)
     public Response sendSignedTransaction(
