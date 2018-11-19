@@ -79,17 +79,27 @@ public class TransactionResource {
     @POST
     @PrivateApi
     @Path("sendsignedtx")
-    @Consumes(APPLICATION_JSON)
-    @Produces(APPLICATION_JSON)
+    @Consumes(APPLICATION_OCTET_STREAM)
+    @Produces(TEXT_PLAIN)
     public Response sendSignedTransaction(
-        @ApiParam(name = "sendSignedRequest", required = true)
-        @NotNull @Valid final SendSignedRequest sendRawRequest) {
+        @HeaderParam("c11n-to") final String recipientKeys,
+        @NotNull @Size(min = 1) final byte[] signedTransaction) {
 
-        final SendResponse response = delegate.sendSignedTransaction(sendRawRequest);
+        SendSignedRequest sendSignedRequest = new SendSignedRequest();
+
+        sendSignedRequest.setHash(signedTransaction);
+
+        Optional.ofNullable(recipientKeys)
+            .filter(s -> !Objects.equals("", s))
+            .map(v -> v.split(","))
+            .ifPresent(sendSignedRequest::setTo);
+
+        final SendResponse response = delegate.sendSignedTransaction(sendSignedRequest);
+
+        final String encodedKey = response.getKey();
 
         return Response.status(Response.Status.OK)
-            .type(APPLICATION_JSON)
-            .entity(response)
+            .entity(encodedKey)
             .build();
     }
 

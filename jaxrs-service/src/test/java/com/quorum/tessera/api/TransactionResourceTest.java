@@ -121,13 +121,11 @@ public class TransactionResourceTest {
 
     @Test
     public void sendRawTransaction() {
-
-        SendSignedRequest sendRequest = new SendSignedRequest();
-        sendRequest.setHash("HASH".getBytes());
-
-        Response result = transactionResource.sendSignedTransaction(sendRequest);
+        SendResponse sendResponse = new SendResponse("KEY");
+        when(transactionManager.sendSignedTransaction(any(SendSignedRequest.class))).thenReturn(sendResponse);
+        Response result = transactionResource.sendSignedTransaction("someone", "".getBytes());
         assertThat(result.getStatus()).isEqualTo(200);
-
+        assertThat(result.getEntity()).isEqualTo("KEY");
         verify(transactionManager).sendSignedTransaction(any(SendSignedRequest.class));
 
     }
