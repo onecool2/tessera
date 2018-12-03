@@ -18,11 +18,7 @@
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.quorum.tessera</groupId>
-            <artifactId>encryption-api</artifactId>
-            <type>jar</type>
-        </dependency>
+
         
         <dependency>
             <groupId>javax.persistence</groupId>
@@ -125,7 +121,12 @@
             <scope>test</scope>
             <type>jar</type>
         </dependency>
-
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>encryption-api</artifactId>
+            <version>0.8-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     <name>tessera-core</name>
 </project>

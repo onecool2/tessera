@@ -45,10 +45,6 @@
         <constructor-arg ref="p2pClient" />
     </bean>
 
-
-
-    
-  
     
     <bean id="p2pClientFactory" class="com.quorum.tessera.client.P2pClientFactory" factory-method="newFactory">
         <constructor-arg ref="config" />
@@ -97,35 +93,11 @@
         <constructor-arg ref="nacl"/>
     </bean>
 
-    <bean id="keyConfig" factory-bean="config" factory-method="getKeys" />
-
-    <bean id="enclave" class="com.quorum.tessera.encryption.EnclaveImpl">
-        <constructor-arg ref="nacl" />
-        <constructor-arg ref="keyManager" />
-    </bean>
-
     <bean id="environmentVariableProvider" class="com.quorum.tessera.config.util.EnvironmentVariableProvider"></bean>
 
     <bean name="keyPairConverter" class="com.quorum.tessera.keypairconverter.KeyPairConverter">
         <constructor-arg ref="config"/>
         <constructor-arg ref="environmentVariableProvider"/>
-    </bean>
-
-    <bean name="keyManager" class="com.quorum.tessera.encryption.KeyManagerImpl">
-        <constructor-arg>
-            <bean factory-bean="keyPairConverter" factory-method="convert">
-                <constructor-arg>
-                    <bean factory-bean="keyConfig" factory-method="getKeyData"/>
-                </constructor-arg>
-            </bean>
-        </constructor-arg>
-        <constructor-arg>
-            <bean class="com.quorum.tessera.encryption.KeyFactory" factory-method="convert">
-                <constructor-arg>
-                    <bean factory-bean="config" factory-method="getAlwaysSendTo" />
-                </constructor-arg>
-            </bean>
-        </constructor-arg>
     </bean>
 
     <bean id="cliDelegate" class="com.quorum.tessera.config.cli.CliDelegate" factory-method="instance"/>
@@ -139,11 +111,6 @@
         </constructor-arg>
     </bean>
     
-    
-    <bean name="naclFactory" class="com.quorum.tessera.nacl.NaclFacadeFactory" factory-method="newFactory"/>
-
-    <bean name="nacl" factory-bean="naclFactory" factory-method="create"/>
-
     <bean name="encryptedTransactionDAO" class="com.quorum.tessera.transaction.EncryptedTransactionDAOImpl"/>
 
     <bean name="encryptedRawTransactionDAO" class="com.quorum.tessera.transaction.EncryptedRawTransactionDAOImpl"/>

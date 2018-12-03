@@ -24,7 +24,7 @@ public class KeyManagerImpl implements KeyManager {
         
         this.localKeys = keys.stream().collect(Collectors.toSet());
         
-        this.defaultKeys = localKeys.iterator().next();
+        this.defaultKeys = localKeys.stream().findFirst().orElse(null);
         
         this.forwardingPublicKeys = forwardKeys.stream().collect(Collectors.toSet());
     }
