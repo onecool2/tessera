@@ -41,7 +41,7 @@
     </bean>
 
     <bean name="transactionRequester" class="com.quorum.tessera.sync.TransactionRequesterImpl">
-        <constructor-arg ref="keyManager" />
+        <constructor-arg ref="enclave" />
         <constructor-arg ref="p2pClient" />
     </bean>
 
@@ -63,7 +63,7 @@
     <bean name="partyInfoService" class="com.quorum.tessera.node.PartyInfoServiceImpl">
         <constructor-arg ref="partyInfoStore"/>
         <constructor-arg ref="configService"/>
-        <constructor-arg ref="keyManager"/>
+        <constructor-arg ref="enclave"/>
     </bean>
 
     <bean name="partyInfoPoller" class="com.quorum.tessera.node.PartyInfoPoller">
@@ -85,13 +85,6 @@
     <bean name="payloadEncoder" class="com.quorum.tessera.transaction.PayloadEncoderImpl"/>
 
     <bean id="partyInfoParser" class="com.quorum.tessera.node.PartyInfoParser" factory-method="create"/>
-
-    <bean name="argon2" class="com.quorum.tessera.argon2.Argon2" factory-method="create"/>
-
-    <bean name="keyEncryptor" class="com.quorum.tessera.config.keys.KeyEncryptorImpl">
-        <constructor-arg ref="argon2"/>
-        <constructor-arg ref="nacl"/>
-    </bean>
 
     <bean id="environmentVariableProvider" class="com.quorum.tessera.config.util.EnvironmentVariableProvider"></bean>
 
