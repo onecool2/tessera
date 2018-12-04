@@ -13,7 +13,7 @@ import static org.mockito.Mockito.mock;
 
 public class PayloadEncoderTest {
 
-    private PayloadEncoder payloadEncoder = new PayloadEncoderImpl();
+    private PayloadEncoder payloadEncoder = PayloadEncoder.create();
 
     @Test
     public void validEncodedPayloadSerialisedToBytes() {

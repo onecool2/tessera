@@ -2,7 +2,10 @@ package com.quorum.tessera.enclave.rest;
 
 import com.quorum.tessera.encryption.Enclave;
 import com.quorum.tessera.encryption.EncodedPayloadWithRecipients;
+import com.quorum.tessera.encryption.PayloadEncoder;
 import com.quorum.tessera.encryption.PublicKey;
+import com.quorum.tessera.encryption.RawTransaction;
+import com.quorum.tessera.nacl.Nonce;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -16,11 +19,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
 @Path("/")
 public class EnclaveResource {
 
     private final Enclave enclave;
+
+    private final PayloadEncoder payloadEncoder = PayloadEncoder.create();
 
     @Inject
     public EnclaveResource(Enclave enclave) {
@@ -60,37 +66,85 @@ public class EnclaveResource {
         return Response.ok(Json.createArrayBuilder(body).build().toString(), MediaType.APPLICATION_JSON_TYPE)
                 .build();
     }
-    
+
     @POST
-    @Consumes(MediaType.APPLICATION_OCTET_STREAM)
+    @Path("encrypt")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response encryptPayload(EnclavePayload payload) {
 
         PublicKey senderKey = PublicKey.from(payload.getSenderKey());
-        List<PublicKey> recipientPublicKeys = payload.getRecipientPublicKeys().stream().map(PublicKey::from).collect(Collectors.toList());
-       
-        
+
+        List<PublicKey> recipientPublicKeys = payload.getRecipientPublicKeys()
+                .stream()
+                .map(PublicKey::from)
+                .collect(Collectors.toList());
+
         EncodedPayloadWithRecipients outcome = enclave.encryptPayload(payload.getData(), senderKey, recipientPublicKeys);
-        
-        
-        
-       // return enclave.encryptPayload(message, senderPublicKey, recipientPublicKeys);
-        
-       
-       
-        return Response.ok().build();
+
+        byte[] response = payloadEncoder.encode(outcome);
+        final StreamingOutput streamingOutput = out -> out.write(response);
+        return Response.ok(streamingOutput)
+                .build();
     }
-//
-//    public EncodedPayloadWithRecipients encryptPayload(RawTransaction rawTransaction, List<PublicKey> recipientPublicKeys) {
-//        return enclave.encryptPayload(rawTransaction, recipientPublicKeys);
-//    }
-//
-//    public RawTransaction encryptRawPayload(byte[] message, PublicKey sender) {
-//        return enclave.encryptRawPayload(message, sender);
-//    }
-//
-//    public byte[] unencryptTransaction(EncodedPayloadWithRecipients payloadWithRecipients, PublicKey providedKey) {
-//        return enclave.unencryptTransaction(payloadWithRecipients, providedKey);
-//    }
+
+    @POST
+    @Path("encrypt/raw")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response encryptPayload(EnclaveRawPayload enclaveRawPayload) {
+
+        byte[] encryptedPayload = enclaveRawPayload.getEncryptedPayload();
+        byte[] encryptedKey = enclaveRawPayload.getEncryptedKey();
+        Nonce nonce = new Nonce(enclaveRawPayload.getNonce());
+        PublicKey from = PublicKey.from(enclaveRawPayload.getFrom());
+
+        List<PublicKey> recipientPublicKeys = enclaveRawPayload.getRecipientPublicKeys().stream()
+                .map(PublicKey::from).collect(Collectors.toList());
+
+        RawTransaction rawTransaction = new RawTransaction(encryptedPayload, encryptedKey, nonce, from);
+
+        EncodedPayloadWithRecipients outcome = enclave.encryptPayload(rawTransaction, recipientPublicKeys);
+
+        byte[] response = payloadEncoder.encode(outcome);
+        final StreamingOutput streamingOutput = out -> out.write(response);
+        return Response.ok(streamingOutput)
+                .build();
+    }
+
+    @POST
+    @Path("encrypt/encryptRawPayload")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response encryptRawPayload(EnclavePayload payload) {
+
+        RawTransaction rawTransaction = enclave.encryptRawPayload(payload.getData(), PublicKey.from(payload.getSenderKey()));
+
+        EnclaveRawPayload enclaveRawPayload = new EnclaveRawPayload();
+        enclaveRawPayload.setFrom(rawTransaction.getFrom().getKeyBytes());
+        enclaveRawPayload.setNonce(rawTransaction.getNonce().getNonceBytes());
+        enclaveRawPayload.setEncryptedPayload(rawTransaction.getEncryptedPayload());
+        enclaveRawPayload.setEncryptedKey(rawTransaction.getEncryptedKey());
+
+        return Response.ok(enclaveRawPayload).build();
+
+    }
+
+    @POST
+    @Path("unencrypt")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response unencryptTransaction(EnclaveUnencryptPayload enclaveUnencryptPayload) {
+
+        EncodedPayloadWithRecipients payloadWithRecipients
+                = payloadEncoder.decodePayloadWithRecipients(enclaveUnencryptPayload.getData());
+        PublicKey providedKey = PublicKey.from(enclaveUnencryptPayload.getProvidedKey());
+
+        byte[] response = enclave.unencryptTransaction(payloadWithRecipients, providedKey);
+
+        final StreamingOutput streamingOutput = out -> out.write(response);
+        return Response.ok(streamingOutput).build();
+
+    }
 
 }

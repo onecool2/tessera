@@ -1,16 +1,20 @@
 package com.quorum.tessera.enclave.rest;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.xml.bind.annotation.XmlMimeType;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public class EnclavePayload {
+@XmlRootElement
+public class EnclavePayload implements Serializable {
 
     @XmlMimeType("base64Binary")
     private byte[] data;
 
-    private byte[]  senderKey;
-
-    private List<byte[] > recipientPublicKeys;
+    @XmlMimeType("base64Binary")
+    private byte[]   senderKey;
+    
+    private List<byte[]> recipientPublicKeys;
 
     public byte[] getData() {
         return data;
@@ -35,7 +39,5 @@ public class EnclavePayload {
     public void setRecipientPublicKeys(List<byte[]> recipientPublicKeys) {
         this.recipientPublicKeys = recipientPublicKeys;
     }
-
-
 
 }

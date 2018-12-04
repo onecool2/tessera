@@ -42,4 +42,8 @@ public interface PayloadEncoder {
     //TODO: 
     EncodedPayloadWithRecipients decodePayloadWithRecipients(byte[] input, PublicKey recipient);
 
+    static PayloadEncoder create() {
+        return new PayloadEncoderImpl();
+    }
+    
 }
