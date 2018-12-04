@@ -35,6 +35,7 @@ public class PartyInfoServiceImpl implements PartyInfoService {
 
         final String advertisedUrl = configService.getServerUri() + "/";
 
+
         final Set<Party> initialParties = configService
                 .getPeers()
                 .stream()
@@ -43,11 +44,12 @@ public class PartyInfoServiceImpl implements PartyInfoService {
                 .collect(toSet());
 
         final Set<Recipient> ourKeys = enclave
-                .getPublicKeys()
-                .stream()
-                .map(key -> PublicKey.from(key.getKeyBytes()))
-                .map(key -> new Recipient(key, advertisedUrl))
-                .collect(toSet());
+            .getPublicKeys()
+            .stream()
+            .map(key -> PublicKey.from(key.getKeyBytes()))
+            .map(key -> new Recipient(key, advertisedUrl))
+            .collect(toSet());
+
 
         partyInfoStore.store(new PartyInfo(advertisedUrl, ourKeys, initialParties));
 

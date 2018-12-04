@@ -19,9 +19,9 @@ public class TransactionRequesterImpl implements TransactionRequester {
 
     private final P2pClient client;
 
-    public TransactionRequesterImpl(final Enclave keyManager,
+    public TransactionRequesterImpl(final Enclave enclave,
             final P2pClient client) {
-        this.enclave = Objects.requireNonNull(keyManager);
+        this.enclave = Objects.requireNonNull(enclave);
         this.client = Objects.requireNonNull(client);
     }
 
