@@ -7,6 +7,7 @@
     <bean name="naclFactory" class="com.quorum.tessera.nacl.NaclFacadeFactory" factory-method="newFactory"/>
 
 
+
     <bean name="keyEncryptor" class="com.quorum.tessera.config.keys.KeyEncryptorImpl">
         <constructor-arg>
             <bean class="com.quorum.tessera.argon2.Argon2" factory-method="create"/>

@@ -1,5 +1,6 @@
 package com.quorum.tessera.transaction;
 
+import com.quorum.tessera.encryption.PayloadEncoder;
 import com.quorum.tessera.api.model.*;
 import com.quorum.tessera.enclave.model.MessageHash;
 import com.quorum.tessera.enclave.model.MessageHashFactory;

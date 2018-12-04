@@ -1,5 +1,6 @@
 package com.quorum.tessera.transaction;
 
+import com.quorum.tessera.encryption.PayloadEncoder;
 import com.quorum.tessera.client.P2pClient;
 import com.quorum.tessera.encryption.PublicKey;
 import com.quorum.tessera.node.PartyInfoService;

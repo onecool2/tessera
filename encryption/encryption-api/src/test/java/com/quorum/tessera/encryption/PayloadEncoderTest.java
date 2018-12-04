@@ -1,9 +1,8 @@
-package com.quorum.tessera.transaction;
+package com.quorum.tessera.encryption;
 
-import com.quorum.tessera.encryption.EncodedPayloadWithRecipients;
-import com.quorum.tessera.encryption.EncodedPayload;
-import com.quorum.tessera.encryption.PublicKey;
+
 import com.quorum.tessera.nacl.Nonce;
+
 import java.util.Base64;
 import static java.util.Collections.singletonList;
 import org.junit.Test;
