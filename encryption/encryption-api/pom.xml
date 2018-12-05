@@ -25,10 +25,6 @@
             <scope>test</scope>
         </dependency>
         
-        <dependency>
-            <groupId>com.quorum.tessera</groupId>
-            <artifactId>key-pair-converter</artifactId>
-            <scope>runtime</scope>
-        </dependency>
+
     </dependencies>
 </project>
