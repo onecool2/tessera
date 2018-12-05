@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.inject.Inject;
 import javax.json.Json;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -28,7 +27,6 @@ public class EnclaveResource {
 
     private final PayloadEncoder payloadEncoder = PayloadEncoder.create();
 
-    @Inject
     public EnclaveResource(Enclave enclave) {
         this.enclave = Objects.requireNonNull(enclave);
     }
@@ -39,18 +37,28 @@ public class EnclaveResource {
         return LocalDateTime.now().toString();
     }
 
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     @GET
     @Path("default")
     public Response defaultPublicKey() {
-        return Response.ok(enclave.defaultPublicKey().getKeyBytes()).build();
+        final StreamingOutput streamingOutput = out -> out.write(enclave.defaultPublicKey().getKeyBytes());
+        return Response.ok(streamingOutput)
+                .build();
     }
 
     @GET
+    @Produces("application/json")
     @Path("forwarding")
-    public List<String> getForwardingKeys() {
-        return enclave.getForwardingKeys().stream()
+    public Response getForwardingKeys() {
+
+        List<String> body = enclave.getForwardingKeys()
+                .stream()
                 .map(PublicKey::encodeToBase64)
                 .collect(Collectors.toList());
+
+        return Response.ok(Json.createArrayBuilder(body).build().toString(), MediaType.APPLICATION_JSON_TYPE)
+                .build();
+
     }
 
     @GET
@@ -113,7 +121,7 @@ public class EnclaveResource {
     }
 
     @POST
-    @Path("encrypt/encryptRawPayload")
+    @Path("encrypt/toraw")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response encryptRawPayload(EnclavePayload payload) {

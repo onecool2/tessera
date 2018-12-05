@@ -12,18 +12,23 @@
         <version>0.8-SNAPSHOT</version>
     </parent>
     <dependencies>
+        
         <dependency>
             <groupId>com.quorum.tessera</groupId>
             <artifactId>service-locator-api</artifactId>
-            <version>0.8-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
+        
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.59</version>
+            <artifactId>bcpkix-jdk15on</artifactId>
             <scope>test</scope>
-            <type>jar</type>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.quorum.tessera</groupId>
+            <artifactId>key-pair-converter</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 </project>

@@ -14,6 +14,7 @@ public class EnclavePayload implements Serializable {
     @XmlMimeType("base64Binary")
     private byte[]   senderKey;
     
+     @XmlMimeType("base64Binary")
     private List<byte[]> recipientPublicKeys;
 
     public byte[] getData() {

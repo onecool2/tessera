@@ -11,10 +11,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
+import javax.json.*;
+import java.util.Base64;
 
 public class EnclaveClient implements Enclave {
 
@@ -48,12 +51,29 @@ public class EnclaveClient implements Enclave {
                 .request()
                 .get();
 
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        JsonArray results = response.readEntity(JsonArray.class);
+
+        return IntStream.range(0, results.size())
+                .mapToObj(i -> results.getString(i))
+                .map(s -> Base64.getDecoder().decode(s))
+                .map(PublicKey::from)
+                .collect(Collectors.toSet());
     }
 
     @Override
     public Set<PublicKey> getPublicKeys() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Response response = client.target(uri)
+                .path("public")
+                .request()
+                .get();
+
+        JsonArray results = response.readEntity(JsonArray.class);
+
+        return IntStream.range(0, results.size())
+                .mapToObj(i -> results.getString(i))
+                .map(s -> Base64.getDecoder().decode(s))
+                .map(PublicKey::from)
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -78,7 +98,29 @@ public class EnclaveClient implements Enclave {
 
     @Override
     public EncodedPayloadWithRecipients encryptPayload(RawTransaction rawTransaction, List<PublicKey> recipientPublicKeys) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        EnclaveRawPayload enclaveRawPayload = new EnclaveRawPayload();
+        enclaveRawPayload.setNonce(rawTransaction.getNonce().getNonceBytes());
+        enclaveRawPayload.setFrom(rawTransaction.getFrom().getKeyBytes());
+        enclaveRawPayload.setRecipientPublicKeys(
+                recipientPublicKeys.stream()
+                        .map(PublicKey::getKeyBytes)
+                        .collect(Collectors.toList())
+        );
+        enclaveRawPayload.setEncryptedPayload(rawTransaction.getEncryptedPayload());
+        enclaveRawPayload.setEncryptedKey(rawTransaction.getEncryptedKey());
+       
+
+        Response response = client.target(uri)
+                .path("encrypt")
+                .path("raw")
+                .request()
+                .post(Entity.json(enclaveRawPayload));
+
+        byte[] body = response.readEntity(byte[].class);
+
+        return PayloadEncoder.create().decodePayloadWithRecipients(body);
+
     }
 
     @Override
@@ -90,7 +132,7 @@ public class EnclaveClient implements Enclave {
 
         Response response = client.target(uri)
                 .path("encrypt")
-                .path("raw")
+                .path("toraw")
                 .request()
                 .post(Entity.json(enclavePayload));
 
@@ -117,8 +159,7 @@ public class EnclaveClient implements Enclave {
                 .path("unencrypt")
                 .request()
                 .post(Entity.json(dto));
-        
-       
+
         return response.readEntity(byte[].class);
     }
 

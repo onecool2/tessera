@@ -15,7 +15,7 @@ public class JerseyServerFactory implements TesseraServerFactory {
     public TesseraServer createServer(ServerConfig serverConfig, Set<Object> services) {
         Application application = services.stream()
                 .filter(Application.class::isInstance)
-                .filter(serverConfig.getApp().getIntf()::isInstance)
+                .filter(serverConfig.getApp().getApplicationType()::isInstance)
                 .findFirst()
                 .map(Application.class::cast)
                 .get();
