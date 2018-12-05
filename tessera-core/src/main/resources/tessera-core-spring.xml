@@ -86,12 +86,7 @@
 
     <bean id="partyInfoParser" class="com.quorum.tessera.node.PartyInfoParser" factory-method="create"/>
 
-    <bean id="environmentVariableProvider" class="com.quorum.tessera.config.util.EnvironmentVariableProvider"></bean>
 
-    <bean name="keyPairConverter" class="com.quorum.tessera.keypairconverter.KeyPairConverter">
-        <constructor-arg ref="config"/>
-        <constructor-arg ref="environmentVariableProvider"/>
-    </bean>
 
     <bean id="cliDelegate" class="com.quorum.tessera.config.cli.CliDelegate" factory-method="instance"/>
 

@@ -6,7 +6,12 @@
 
     <bean name="naclFactory" class="com.quorum.tessera.nacl.NaclFacadeFactory" factory-method="newFactory"/>
 
+    <bean id="environmentVariableProvider" class="com.quorum.tessera.config.util.EnvironmentVariableProvider"></bean>
 
+    <bean name="keyPairConverter" class="com.quorum.tessera.keypairconverter.KeyPairConverter">
+        <constructor-arg ref="config"/>
+        <constructor-arg ref="environmentVariableProvider"/>
+    </bean>
 
     <bean name="keyEncryptor" class="com.quorum.tessera.config.keys.KeyEncryptorImpl">
         <constructor-arg>
